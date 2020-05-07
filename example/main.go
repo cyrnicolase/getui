@@ -28,11 +28,16 @@ func init() {
 }
 
 func main() {
+	toSingle()
+}
+
+func batchSingle() {
 	result, err := sendSingleBatch()
 	if nil != err {
 		log.Fatal("批量推送单个消息", err)
 	}
 	log.Println("批量推送单个消息", string(result))
+
 }
 
 func toList() {
@@ -86,11 +91,12 @@ func toSingle() {
 
 func sendTransmissionSingle() (string, error) {
 	msg := gt.NewMessage(getui.MsgTypeTransmission)
-	t := getui.NewTransmission("测试透传消息, time:" + time.Now().Format(`2006-01-02 15:04:05`))
+	t, pushInfo := getui.NewTransmission(`横幅标题`, `横幅内容`, "测试透传消息, time:"+time.Now().Format(`2006-01-02 15:04:05`))
 	param := getui.PushToSingleParam{
 		Message:      *msg,
 		Transmission: t,
 		Cid:          Cid,
+		PushInfo:     pushInfo,
 	}
 
 	result, err := gt.PushToSingle(param)
@@ -163,9 +169,10 @@ func sendToList(taskid string) ([]byte, error) {
 
 func sendSingleBatch() ([]byte, error) {
 	msg := gt.NewMessage(getui.MsgTypeTransmission)
-	t := getui.NewTransmission("Batch测试透传消息, time:" + time.Now().Format(`15:04:05`))
+	t, pushInfo := getui.NewTransmission("横幅标题", "横幅内容", "Batch测试透传消息, time:"+time.Now().Format(`15:04:05`))
 	p := getui.NewPushToSingleParam(*msg)
 	p.Transmission = t
+	p.PushInfo = pushInfo
 	p.Cid = Cid
 
 	msg1 := gt.NewMessage(getui.MsgTypeNotification)

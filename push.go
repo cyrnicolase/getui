@@ -20,6 +20,8 @@ func signature(appKey, timestamp, ms string) string {
 }
 
 // RefreshToken 刷新授权Token
+// 鉴权令牌有效期在个推默认是1天，过期后无法使用
+// 所以在请求到新的Token后，会将该Token记录下来，并设置一个新的过期时间
 func (g *Getui) RefreshToken() error {
 	// 如果当前Token存在，且未过期，那么就不用刷新Token
 	if "" != g.Token && time.Now().Before(g.TokenExpireAt) {
@@ -66,14 +68,14 @@ func (g *Getui) RefreshToken() error {
 
 // PushToSingleParam 单推
 type PushToSingleParam struct {
-	RequestID    string                 `json:"requestid"`
-	Message      Message                `json:"message"`
-	Link         *Link                  `json:"link,omitempty"`
-	Notification *Notification          `json:"notification,omitempty"`
-	Transmission *Transmission          `json:"transmission,omitempty"`
-	PushInfo     map[string]interface{} `json:"push_info,omitempty"`
-	Cid          string                 `json:"cid,omitempty"`
-	Alias        string                 `json:"alias,omitempty"`
+	RequestID    string        `json:"requestid"`
+	Message      Message       `json:"message"`
+	Link         *Link         `json:"link,omitempty"`
+	Notification *Notification `json:"notification,omitempty"`
+	Transmission *Transmission `json:"transmission,omitempty"`
+	PushInfo     PushInfo      `json:"push_info,omitempty"`
+	Cid          string        `json:"cid,omitempty"`
+	Alias        string        `json:"alias,omitempty"`
 }
 
 // NewPushToSingleParam 返回单推消息参数
@@ -97,18 +99,19 @@ func (g *Getui) PushToSingle(p PushToSingleParam) ([]byte, error) {
 		return nil, errors.Wrap(err, "encode push_to_single param to json bytes")
 	}
 	url := fmt.Sprintf(`%s/%s/push_single`, RestAPI, g.AppID)
+	fmt.Println(url, string(body))
 
 	return Send(url, g.Token, bytes.NewBuffer(body))
 }
 
 // SaveListBodyParam 保存消息体
 type SaveListBodyParam struct {
-	Message      Message                `json:"message"`
-	Link         *Link                  `json:"link,omitempty"`
-	Notification *Notification          `json:"notification,omitempty"`
-	Transmission *Transmission          `json:"transmission,omitempty"`
-	PushInfo     map[string]interface{} `json:"push_info,omitempty"`
-	TaskName     string                 `json:"task_name,omitempty"`
+	Message      Message       `json:"message"`
+	Link         *Link         `json:"link,omitempty"`
+	Notification *Notification `json:"notification,omitempty"`
+	Transmission *Transmission `json:"transmission,omitempty"`
+	PushInfo     PushInfo      `json:"push_info,omitempty"`
+	TaskName     string        `json:"task_name,omitempty"`
 }
 
 // SaveListBodyResponse 保存群发消息服务器返回结构体

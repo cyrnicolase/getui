@@ -23,8 +23,8 @@ const (
 	// MsgTypeTransmission 透传消息模板
 	MsgTypeTransmission MsgType = `transmission`
 
-	// NetWorkTypeNoLimit 联网方式不限
-	NetWorkTypeNoLimit NetWorkType = 0
+	// NetWorkTypeUnlimited 联网方式不限
+	NetWorkTypeUnlimited NetWorkType = 0
 	// NetWorkTypeWIFI 仅限wifi
 	NetWorkTypeWIFI NetWorkType = 1
 	// NetWorkTypeMobile 仅移动网
@@ -41,9 +41,16 @@ type NetWorkType int
 // 这个建议调用方做为包级别变量，这样可以进行数据缓存，缓存Token 信息
 // http://docs.getui.com/getui/server/rest/explain/
 type Getui struct {
-	AppID        string
-	AppSecret    string
-	AppKey       string
+	// AppID 个推分配应用ID
+	AppID string
+
+	// AppSecret 个推分配应用加密
+	AppSecret string
+
+	// AppKey 个推分配Key
+	AppKey string
+
+	// MasterSecret 个推分配主加密串
 	MasterSecret string
 
 	// Token 请求个推需要的授权Token
@@ -55,7 +62,7 @@ type Getui struct {
 	TokenExpireAt time.Time
 }
 
-// NewGetui 返回个推
+// NewGetui 返回个推结构体；并使用该对象来调用相关推送方法
 func NewGetui(appID, appSecret, appKey, masterSecret string) *Getui {
 	return &Getui{
 		AppID:        appID,
@@ -68,19 +75,22 @@ func NewGetui(appID, appSecret, appKey, masterSecret string) *Getui {
 // Message 消息体类型
 // http://docs.getui.com/getui/server/rest/explain/
 type Message struct {
-	AppKey            string  `json:"appkey"`
-	IsOffline         bool    `json:"is_offline"`
-	OfflineExpireTime int     `json:"offline_expire_time"`
-	MsgType           MsgType `json:"msgtype"`
+	AppKey            string      `json:"appkey"`
+	IsOffline         bool        `json:"is_offline"`
+	OfflineExpireTime int         `json:"offline_expire_time"`
+	PushNetworkType   NetWorkType `json:"push_network_type"`
+	MsgType           MsgType     `json:"msgtype"`
 }
 
 // NewMessage 返回消息类型
-// 默认使用透传模式
+// 返回消息类型；
+// 默认：is_offline = true; offline_expire_time=86400000; push_network_type = 0
 func (g Getui) NewMessage(msgType MsgType) *Message {
 	return &Message{
 		AppKey:            g.AppKey,
 		IsOffline:         true,
 		OfflineExpireTime: 86400000,
+		PushNetworkType:   NetWorkTypeUnlimited,
 		MsgType:           msgType,
 	}
 }
