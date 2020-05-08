@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/cyrnicolase/getui"
+	"github.com/pkg/errors"
 )
 
 var (
@@ -28,46 +29,51 @@ func init() {
 }
 
 func main() {
-	toSingle()
+	if err := toSingle(); nil != err {
+		log.Fatalf("%+v", err)
+	}
 }
 
-func batchSingle() {
+func batchSingle() error {
 	result, err := sendSingleBatch()
 	if nil != err {
-		log.Fatal("批量推送单个消息", err)
+		return errors.Wrap(err, "批量推送单个消息")
 	}
 	log.Println("批量推送单个消息", string(result))
 
+	return nil
 }
 
-func toList() {
+func toList() error {
 	result, err := saveListBody()
 	if nil != err {
-		log.Fatal("保存群发消息到服务器", err)
+		return errors.Wrap(err, "保存群发消息到服务器")
 	}
 	log.Println("保存群发消息到服务器", string(result))
 
 	var body getui.SaveListBodyResponse
 	if err := json.Unmarshal(result, &body); nil != err {
-		log.Fatal("decode bytes to SaveListBodyResponse", err)
+		return errors.Wrap(err, "decode bytes to SaveListBodyResponse")
 	}
-
 	if getui.ResultOK != body.Result {
-		log.Fatal("save_list_body api fail", string(result))
+		return errors.Wrap(err, "save_list_body api fail")
 	}
 
+	// 将保存到服务器的消息，群发给所有的客户端
+	// 这里的群发可以使用 goroutine
 	result, err = sendToList(body.TaskID)
 	if nil != err {
-		log.Fatal("发送群发消息", err)
+		return errors.Wrap(err, "发送群发消息")
 	}
 	log.Println("发送群发消息", string(result))
 
+	return nil
 }
 
-func toSingle() {
+func toSingle() error {
 	result, err := sendTransmissionSingle()
 	if nil != err {
-		log.Fatal("发送单个透传消息", err)
+		return errors.Wrap(err, "发送单个透传消息")
 	}
 	log.Println("发送单个透传消息", result)
 
@@ -75,7 +81,7 @@ func toSingle() {
 
 	result, err = sendNotificationSingle()
 	if nil != err {
-		log.Fatal("发送单个通知消息", err)
+		return errors.Wrap(err, "发送单个通知消息")
 	}
 	log.Println("发送单个通知消息", result)
 
@@ -83,10 +89,11 @@ func toSingle() {
 
 	result, err = sendLinkSingle()
 	if nil != err {
-		log.Fatal("发送单个连接消息", err)
+		return errors.Wrap(err, "发送单个连接消息")
 	}
 	log.Println("发送单个连接消息", result)
 
+	return nil
 }
 
 func sendTransmissionSingle() (string, error) {
