@@ -98,7 +98,7 @@ func toSingle() error {
 
 func sendTransmissionSingle() (string, error) {
 	msg := gt.NewMessage(getui.MsgTypeTransmission)
-	t, pushInfo := getui.NewTransmission(`横幅标题`, `横幅内容`, "测试透传消息, time:"+time.Now().Format(`2006-01-02 15:04:05`))
+	t, pushInfo := getui.NewTransmission(`横幅内容`, `横幅标题`, "测试透传消息, time:"+time.Now().Format(`2006-01-02 15:04:05`))
 	param := getui.PushToSingleParam{
 		Message:      *msg,
 		Transmission: t,

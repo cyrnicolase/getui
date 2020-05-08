@@ -115,7 +115,7 @@ func (Transmission) Name() string {
 // title 横幅标题
 // text 横幅内容
 // content 透传内容
-func NewTransmission(title, text, content string) (*Transmission, PushInfo) {
+func NewTransmission(text, title, content string) (*Transmission, PushInfo) {
 	alert := Alert{}
 	alert.Body = text
 	alert.Title = title
