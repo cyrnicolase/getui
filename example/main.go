@@ -51,7 +51,7 @@ func toList() error {
 	}
 	log.Println("保存群发消息到服务器", string(result))
 
-	var body getui.SaveListBodyResponse
+	var body getui.ListBodyResponse
 	if err := json.Unmarshal(result, &body); nil != err {
 		return errors.Wrap(err, "decode bytes to SaveListBodyResponse")
 	}
@@ -100,7 +100,7 @@ func sendTransmissionSingle() (string, error) {
 	msg := gt.NewMessage(getui.MsgTypeTransmission)
 	t, pushInfo := getui.NewTransmission(`横幅内容`, `横幅标题`, "测试透传消息, time:"+time.Now().Format(`2006-01-02 15:04:05`))
 	param := getui.PushToSingleParam{
-		Message:      *msg,
+		Message:      msg,
 		Transmission: t,
 		Cid:          Cid,
 		PushInfo:     pushInfo,
@@ -120,7 +120,7 @@ func sendNotificationSingle() (string, error) {
 	t.TransmissionContent = "我是一个通知"
 
 	param := getui.PushToSingleParam{
-		Message:      *msg,
+		Message:      msg,
 		Notification: t,
 		Cid:          Cid,
 	}
@@ -138,7 +138,7 @@ func sendLinkSingle() (string, error) {
 	t := getui.NewLink("www.baidu.com", "访问百度", "百度")
 
 	param := getui.PushToSingleParam{
-		Message: *msg,
+		Message: msg,
 		Link:    t,
 		Cid:     Cid,
 	}
@@ -156,8 +156,8 @@ func saveListBody() ([]byte, error) {
 	t := getui.NewNotification("群推消息1", "群推1")
 	t.TransmissionContent = "群推透传消息"
 
-	param := getui.SaveListBodyParam{
-		Message:      *msg,
+	param := getui.ListBodyParam{
+		Message:      msg,
 		Notification: t,
 	}
 
@@ -177,7 +177,7 @@ func sendToList(taskid string) ([]byte, error) {
 func sendSingleBatch() ([]byte, error) {
 	msg := gt.NewMessage(getui.MsgTypeTransmission)
 	t, pushInfo := getui.NewTransmission("横幅标题", "横幅内容", "Batch测试透传消息, time:"+time.Now().Format(`15:04:05`))
-	p := getui.NewPushToSingleParam(*msg)
+	p := getui.NewPushToSingleParam(msg)
 	p.Transmission = t
 	p.PushInfo = pushInfo
 	p.Cid = Cid
@@ -185,25 +185,25 @@ func sendSingleBatch() ([]byte, error) {
 	msg1 := gt.NewMessage(getui.MsgTypeNotification)
 	t1 := getui.NewNotification("Batch-Body", "Batch-Head")
 	t1.TransmissionContent = "Batch我是一个通知"
-	p1 := getui.NewPushToSingleParam(*msg1)
+	p1 := getui.NewPushToSingleParam(msg1)
 	p1.Notification = t1
 	p1.Cid = Cid
 
 	msg2 := gt.NewMessage(getui.MsgTypeLink)
 	t2 := getui.NewLink("www.baidu.com", "Batch访问百度", "Batch百度")
-	p2 := getui.NewPushToSingleParam(*msg2)
+	p2 := getui.NewPushToSingleParam(msg2)
 	p2.Link = t2
 	p2.Cid = Cid
 
 	var ml []getui.PushToSingleParam
-	ml = append(ml, *p)
-	ml = append(ml, *p1)
-	ml = append(ml, *p2)
+	ml = append(ml, p)
+	ml = append(ml, p1)
+	ml = append(ml, p2)
 
-	batch := getui.PushSingleBatchParam{
+	batch := getui.PushToBatchSingleParam{
 		MsgList:    ml,
 		NeedDetail: false,
 	}
 
-	return gt.PushSingleBatch(batch)
+	return gt.PushToBatchSingle(batch)
 }

@@ -37,10 +37,10 @@ type Style struct {
 
 // NewStyle 样式
 // 默认: type=0
-func NewStyle(txt, title string) *Style {
-	return &Style{
+func NewStyle(text, title string) Style {
+	return Style{
 		Type:         0,
-		Text:         txt,
+		Text:         text,
 		Title:        title,
 		Logo:         "",
 		IsRing:       true,
@@ -71,7 +71,7 @@ func (Notification) Name() string {
 func NewNotification(text, title string) *Notification {
 	return &Notification{
 		TransmissionType: true,
-		Style:            *NewStyle(text, title),
+		Style:            NewStyle(text, title),
 	}
 }
 
@@ -93,7 +93,7 @@ func (Link) Name() string {
 func NewLink(url, text, title string) *Link {
 	return &Link{
 		URL:   url,
-		Style: *NewStyle(text, title),
+		Style: NewStyle(text, title),
 	}
 }
 
@@ -155,7 +155,7 @@ func (StartActivity) Name() string {
 func NewStartActivity(text, title string) *StartActivity {
 	return &StartActivity{
 		TransmissionType: true,
-		Style:            *NewStyle(text, title),
+		Style:            NewStyle(text, title),
 	}
 }
 

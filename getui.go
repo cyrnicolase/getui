@@ -3,8 +3,8 @@ package getui
 import "time"
 
 const (
-	// RestAPI 接口域名
-	RestAPI string = `https://restapi.getui.com/v1`
+	// APIServer 接口域名
+	APIServer string = `https://restapi.getui.com/v1`
 
 	// ContentTypeJSON json类型的请求
 	ContentTypeJSON string = `application/json`
@@ -85,8 +85,8 @@ type Message struct {
 // NewMessage 返回消息类型
 // 返回消息类型；
 // 默认：is_offline = true; offline_expire_time=86400000; push_network_type = 0
-func (g Getui) NewMessage(msgType MsgType) *Message {
-	return &Message{
+func (g Getui) NewMessage(msgType MsgType) Message {
+	return Message{
 		AppKey:            g.AppKey,
 		IsOffline:         true,
 		OfflineExpireTime: 86400000,

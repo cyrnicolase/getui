@@ -29,7 +29,7 @@ func (g *Getui) RefreshToken() error {
 	}
 
 	now := time.Now()
-	url := fmt.Sprintf(`%s/%s/auth_sign`, RestAPI, g.AppID)
+	url := fmt.Sprintf(`%s/%s/auth_sign`, APIServer, g.AppID)
 	timestamp := now.Unix() * 1000
 	sign := signature(g.AppKey, strconv.FormatInt(timestamp, 10), g.MasterSecret)
 
@@ -79,8 +79,8 @@ type PushToSingleParam struct {
 }
 
 // NewPushToSingleParam 返回单推消息参数
-func NewPushToSingleParam(message Message) *PushToSingleParam {
-	return &PushToSingleParam{
+func NewPushToSingleParam(message Message) PushToSingleParam {
+	return PushToSingleParam{
 		Message:   message,
 		RequestID: strconv.FormatInt(time.Now().UnixNano(), 10),
 	}
@@ -88,7 +88,6 @@ func NewPushToSingleParam(message Message) *PushToSingleParam {
 
 // PushToSingle 单推
 func (g *Getui) PushToSingle(p PushToSingleParam) ([]byte, error) {
-	// 刷新验证Token
 	if err := g.RefreshToken(); nil != err {
 		return nil, err
 	}
@@ -98,13 +97,13 @@ func (g *Getui) PushToSingle(p PushToSingleParam) ([]byte, error) {
 	if nil != err {
 		return nil, errors.Wrap(err, "encode push_to_single param to json bytes")
 	}
-	url := fmt.Sprintf(`%s/%s/push_single`, RestAPI, g.AppID)
+	url := fmt.Sprintf(`%s/%s/push_single`, APIServer, g.AppID)
 
 	return Send(url, g.Token, bytes.NewBuffer(body))
 }
 
-// SaveListBodyParam 保存消息体
-type SaveListBodyParam struct {
+// ListBodyParam 保存消息体
+type ListBodyParam struct {
 	Message      Message       `json:"message"`
 	Link         *Link         `json:"link,omitempty"`
 	Notification *Notification `json:"notification,omitempty"`
@@ -113,20 +112,20 @@ type SaveListBodyParam struct {
 	TaskName     string        `json:"task_name,omitempty"`
 }
 
-// SaveListBodyResponse 保存群发消息服务器返回结构体
-type SaveListBodyResponse struct {
+// ListBodyResponse 保存群发消息服务器返回结构体
+type ListBodyResponse struct {
 	Result string `json:"result"`
 	TaskID string `json:"taskid"`
 }
 
 // SaveListBody 将推送消息保存在服务器
 // 后面可以重复调用tolist接口将保存的消息发送给不同的目标用户
-func (g *Getui) SaveListBody(p SaveListBodyParam) ([]byte, error) {
+func (g *Getui) SaveListBody(p ListBodyParam) ([]byte, error) {
 	if err := g.RefreshToken(); nil != err {
 		return nil, err
 	}
 
-	url := fmt.Sprintf(`%s/%s/save_list_body`, RestAPI, g.AppID)
+	url := fmt.Sprintf(`%s/%s/save_list_body`, APIServer, g.AppID)
 	body, err := json.Marshal(p)
 	if nil != err {
 		return nil, errors.Wrap(err, "encode save_list_body param to json bytes")
@@ -151,7 +150,7 @@ func (g *Getui) PushToList(p PushListParam) ([]byte, error) {
 		return nil, err
 	}
 
-	url := fmt.Sprintf(`%s/%s/push_list`, RestAPI, g.AppID)
+	url := fmt.Sprintf(`%s/%s/push_list`, APIServer, g.AppID)
 	body, err := json.Marshal(p)
 	if nil != err {
 		return nil, errors.Wrap(err, "encode push_list param to json bytes")
@@ -160,20 +159,20 @@ func (g *Getui) PushToList(p PushListParam) ([]byte, error) {
 	return Send(url, g.Token, bytes.NewBuffer(body))
 }
 
-// PushSingleBatchParam 批量单推参数
+// PushToBatchSingleParam 批量单推参数
 // 将一批推送个人信息合并在一个接口，一次请求进行推送
-type PushSingleBatchParam struct {
+type PushToBatchSingleParam struct {
 	MsgList    []PushToSingleParam `json:"msg_list"`
 	NeedDetail bool                `json:"need_detail,omitempty"`
 }
 
-// PushSingleBatch 批量单推
-func (g *Getui) PushSingleBatch(p PushSingleBatchParam) ([]byte, error) {
+// PushToBatchSingle 批量单推
+func (g *Getui) PushToBatchSingle(p PushToBatchSingleParam) ([]byte, error) {
 	if err := g.RefreshToken(); nil != err {
 		return nil, err
 	}
 
-	url := fmt.Sprintf(`%s/%s/push_single_batch`, RestAPI, g.AppID)
+	url := fmt.Sprintf(`%s/%s/push_single_batch`, APIServer, g.AppID)
 	body, err := json.Marshal(p)
 	if nil != err {
 		return nil, errors.Wrap(err, "encode push_single_batch param to json bytes")
