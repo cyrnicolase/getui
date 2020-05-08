@@ -99,7 +99,6 @@ func (g *Getui) PushToSingle(p PushToSingleParam) ([]byte, error) {
 		return nil, errors.Wrap(err, "encode push_to_single param to json bytes")
 	}
 	url := fmt.Sprintf(`%s/%s/push_single`, RestAPI, g.AppID)
-	fmt.Println(url, string(body))
 
 	return Send(url, g.Token, bytes.NewBuffer(body))
 }
