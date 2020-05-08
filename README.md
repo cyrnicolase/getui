@@ -2,6 +2,11 @@
 
 使用Go语言封装个推的RestAPI,自己提供一个SDK.
 
+## 安装
+```
+go get -u -v github.com/cyrnicolase/getui
+```
+
 ## 支持
 
 + 对使用App的某个用户，单独推送消息(push_single)
