@@ -29,7 +29,7 @@ cid := `clientid`
 message := gt.NewMessage(getui.MsgTypeTransmission)
 template, pushInfo := getui.NewTransmission(`横幅内容`, `横幅标题`, `透传内容`)
 param := getui.PushToSingleParam {
-    Message:        *message,
+    Message:        message,
     Transmission:   template,
     Cid:            cid,
     PushInfo:       pushInfo,
@@ -43,7 +43,7 @@ if nil != err {
 fmt.Println(string(result))
 ```
 
-其他使用方法请查看[example](https://github.com/cyrnicolase/getui/blob/master/example/main.go)
+其他使用方法请查看[examples](https://github.com/cyrnicolase/getui/blob/master/examples)
 
 ## 建议
 将 getui 对象作为包级别变量. 因为Getui{} 本身会缓存请求接口的AuthToken，
