@@ -16,7 +16,7 @@ const (
 )
 
 var (
-	// 这里设计为包级别的变量，是不是不好？？？
+	// 请求超时时间
 	requestTimeout time.Duration
 )
 

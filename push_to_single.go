@@ -51,12 +51,14 @@ func (g *Getui) PushToSingleContext(ctx context.Context, p PushToSingleParam) ([
 		return nil, err
 	}
 
-	p.RequestID = strconv.FormatInt(time.Now().UnixNano(), 10)
+	if "" == p.RequestID {
+		p.RequestID = strconv.FormatInt(time.Now().UnixNano(), 10)
+	}
+	url := fmt.Sprintf(`%s/%s/push_single`, APIServer, g.AppID)
 	body, err := json.Marshal(p)
 	if nil != err {
 		return nil, errors.Wrap(err, "encode push_to_single param to json bytes")
 	}
-	url := fmt.Sprintf(`%s/%s/push_single`, APIServer, g.AppID)
 
 	return SendContext(ctx, url, g.Token, bytes.NewBuffer(body))
 }

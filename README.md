@@ -14,6 +14,7 @@ go get -u -v github.com/cyrnicolase/getui
 + 对使用App的某个用户，单独推送消息(push_single)
 + tolist群推(push_list)
 + 批量单推(push_single_batch)
++ 推送给应用(push_app)
 
 ## 用法
 
