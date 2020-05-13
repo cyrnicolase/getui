@@ -64,7 +64,7 @@ func saveListBody() ([]byte, error) {
 }
 
 func sendToList(taskid string) ([]byte, error) {
-	p := getui.PushListParam{
+	p := getui.PushToListParam{
 		Cid:        []string{Cid},
 		TaskID:     taskid,
 		NeedDetail: false,

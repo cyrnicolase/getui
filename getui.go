@@ -6,9 +6,6 @@ const (
 	// APIServer 接口域名
 	APIServer string = `https://restapi.getui.com/v1`
 
-	// ContentTypeJSON json类型的请求
-	ContentTypeJSON string = `application/json`
-
 	// ResultOK 接口返回状态；成功状态
 	ResultOK string = `ok`
 
