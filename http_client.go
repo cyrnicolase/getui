@@ -33,7 +33,7 @@ func Send(url, token string, body io.Reader) ([]byte, error) {
 // SendContext 携带context的发送请求
 func SendContext(ctx context.Context, url, token string, body io.Reader) ([]byte, error) {
 	client := newClient()
-	req, err := newRequest(ctx, `POST`, url, body)
+	req, err := newRequest(ctx, url, token, body)
 	if nil != err {
 		return nil, err
 	}
